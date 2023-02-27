@@ -15,23 +15,30 @@ disease_lst <- unique(mort_df$ICD.Chapter)
 
 ui <- fluidPage(
 
+  div(id='header',
     titlePanel("Mortality by State"),
+  ),
 
-    sidebarLayout(
-        sidebarPanel(
+  div(id='input',
+    #sidebarLayout(
+    #    sidebarPanel(
           selectInput(
             "disease",
             label="Choose a cause of death",
             choices=disease_lst
-          )
-        ),
+          ),
+    #    ),
+    ),
 
-        mainPanel(
-           #plotOutput("distPlot")
-           #box(plotlyOutput("distPlot", height = "800px", width = "800px"))
-            plotlyOutput("distPlot", height = "800px", width = "800px")
-        )
-    )
+  div(id='input',
+      plotlyOutput("distPlot", height = "800px", width = "800px"),
+  )
+    #     mainPanel(
+    #        #plotOutput("distPlot")
+    #        #box(plotlyOutput("distPlot", height = "800px", width = "800px"))
+    #         plotlyOutput("distPlot", height = "800px", width = "800px")
+    #     )
+    # )
 
 )
 
@@ -48,7 +55,10 @@ server <- function(input, output) {
                 colors = c("lightgray","darkblue"),
                 showlegend = FALSE, type="bar"
         ) %>%
-        layout(yaxis = list(categoryorder = "total ascending"))
+        layout(
+          yaxis = list(categoryorder = "total ascending"),
+          title = input$disease
+        )
 
     })
 }
