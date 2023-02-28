@@ -3,6 +3,9 @@ library(dplyr)
 library(ggplot2)
 library('rsconnect')
 library(plotly)
+library(tidyverse)
+
+source("./m3_viz_q2/helpers.R")
 
 
 

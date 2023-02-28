@@ -13,8 +13,8 @@ source("helpers.R")
 
 st_df <- loadStateMortalityData()
 us_df <- loadUSMortalityData()
-disease_lst <- unique(df$Disease_ID)
-st_lst <- unique(df$State)
+disease_lst <- unique(st_df$Disease_ID)
+st_lst <- unique(st_df$State)
 
 
 
@@ -38,7 +38,7 @@ ui <- fluidPage(
     ),
 
   div(id='input',
-      plotlyOutput("distPlot", height = "800px", width = "800px"),
+      plotlyOutput("distPlot", height = "400px", width = "700px"),
   )
 
 )
@@ -58,7 +58,8 @@ server <- function(input, output) {
                                name='Crude.Rate.US',
                                type = 'scatter', mode = 'markers',
                                line = list(color = 'red', width = 2, dash = 'dash'),
-                               marker = list(color='red', size=8))
+                               marker = list(color='red', size=8)) %>%
+        layout(title = paste0(input$disease,' (',input$state,')'))
 
       fig <- fig %>% add_trace(data=stfl_df,x = ~Year, y = ~Crude.Rate,
                                name = 'Crude.Rate.ST',

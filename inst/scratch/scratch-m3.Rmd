@@ -106,87 +106,23 @@ mort_df$ICD <- replace(mort_df$ICD,mort_df$ICD=="Symptoms, signs and abnormal cl
 
 ```{r}
 
-mort_df <- read.csv('./m3_viz/data/cleaned-cdc-mortality-1999-2010-2.csv')
-mort_df['ICD'] <- mort_df$ICD.Chapter
-mort_df$ICD <- replace(mort_df$ICD,mort_df$ICD=="Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism","Diseases of the blood and blood-forming organ")
-mort_df$ICD <- replace(mort_df$ICD,mort_df$ICD=="Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified"  ,"Symptoms not elsewhere classified")
-
-df <- mort_df |> 
-  dplyr::mutate(ICD = factor(ICD, levels = unique(ICD))) |> 
-  dplyr::group_by(ICD) |> 
-  mutate(Disease_ID = dplyr::cur_group_id()) |>
-  ungroup()
-
-df$Disease_ID <- paste0('d',df$Disease_ID)
-
-df <- df %>% replace(is.na(.), 0)
-
-```
+source('./m3_viz_q2/helpers.R')
 
 
+st_df <- loadStateMortalityData()
+us_df <- loadUSMortalityData()
 
 
-```{r}
+input <- list()
+input$state <- 'AL'
+input$disease <- 'd7'
 
-# create us dataframe
-us_df <-  df %>% group_by(Year, Disease_ID) %>%
-              summarise(Deaths = sum(Deaths),
-                        Population = sum(Population))
+stfl_df <-filterStateDiseaseDF(st_df,  input$state, input$disease)
+usfl_df <- filterUSDiseaseDF(us_df, input$disease)
 
-us_df$Crude.Rate <- us_df$Deaths / us_df$Population * 100000
-us_df <- us_df %>% pivot_wider(id_cols = 'Year', names_from = 'Disease_ID', values_from = 'Crude.Rate')
-us_df <- us_df %>% replace(is.na(.), 0)
 
 
 ```
-
-
-
-
-
-
-```{r}
-dID <- 'd5'
-stID <- 'AL'
-
-
-
-s_df <- df %>% filter(State == stID) %>% select(Year, Crude.Rate, Disease_ID)
-s_df <- s_df %>% pivot_wider(id_cols = 'Year', names_from = 'Disease_ID', values_from = 'Crude.Rate')
-s_df <- s_df %>% replace(is.na(.), 0)
-
-us_df <- us_df %>% select(Year,dID) %>% rename(Crude.Rate = dID) 
-s_df <- s_df %>% select(Year,dID) %>% rename(Crude.Rate = dID)
-
-
-
-# initialize plot
-fig <- plot_ly()
-
-
-fig <- fig %>% add_trace(data=us_df, x = ~Year, y = ~Crude.Rate, name='Crude.Rate.US', type = 'scatter', mode = 'markers', line = list(color = 'red', width = 2, dash = 'dash'),marker = list(color='red', size=8))
-
-fig <- fig %>% add_trace(data=s_df,x = ~Year, y = ~Crude.Rate, name = 'Crude.Rate.ST', type = 'scatter', mode = 'lines+markers', line = list(color = 'steelblue', width = 4), marker = list(color='steelblue', size=8)) 
-
-fig
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -202,142 +138,18 @@ fig
 
 ```{r}
 
-
-# df_non_na <- df[is.na(df$Deaths) || is.na(df$Population), ]
-# 
-# df_non_na <- df[is.na(df$Deaths), ]
-# df_non_na <- df[is.na(df$Population), ]
-# 
-# 
-# df_non_na <- df[(df$Deaths == 0) | (df$Population == 0), ]
-# 
-# 
-# df %>% filter(Deaths == 0 | Population == 0)
-
-```
+sID <- 'NY'
+dID <- 'd7'
 
 
+d0_df <- df %>% filter(State == sID & Disease_ID == dID)
 
 
-```{r}
-
-us_df <-  df %>% group_by(Year, Disease_ID) %>%
-              summarise(Deaths = sum(Deaths),
-                        Population = sum(Population))
-
-#us_df <- us_df %>% mutate(Disease_Rate = Deaths / Population)
-us_df$Crude.Rate <- us_df$Deaths / us_df$Population * 100000
-
-#us0_df <- us_df %>% filter(Disease_ID == 7)
-#us0_df <- us0_df %>% pivot_wider(id_cols = 'Disease_ID', names_from = 'Year', values_from = 'Disease_Rate')
-#us_df <- us_df %>% pivot_wider(id_cols = 'Disease_ID', names_from = 'Year', values_from = 'Crude.Rate')
-us_df <- us_df %>% pivot_wider(id_cols = 'Year', names_from = 'Disease_ID', values_from = 'Crude.Rate')
-                
-us_df <- us_df %>% replace(is.na(.), 0)
-
-```
-
-
-```{r}
-
-s_df <- df %>% filter(State == 'NY') %>% select(Year, Crude.Rate, Disease_ID)
-s_df <- s_df %>% pivot_wider(id_cols = 'Year', names_from = 'Disease_ID', values_from = 'Crude.Rate')
-s_df <- s_df %>% replace(is.na(.), 0)
-
-```
-
-
-
-
-
-```{r}
-
-dID <- 'd5'
-stID <- 'AL'
-
-us_df <-  df %>% group_by(Year, Disease_ID) %>%
-              summarise(Deaths = sum(Deaths),
-                        Population = sum(Population))
-
-us_df$Crude.Rate <- us_df$Deaths / us_df$Population * 100000
-us_df <- us_df %>% pivot_wider(id_cols = 'Year', names_from = 'Disease_ID', values_from = 'Crude.Rate')
-us_df <- us_df %>% replace(is.na(.), 0)
-
-s_df <- df %>% filter(State == stID) %>% select(Year, Crude.Rate, Disease_ID)
-s_df <- s_df %>% pivot_wider(id_cols = 'Year', names_from = 'Disease_ID', values_from = 'Crude.Rate')
-s_df <- s_df %>% replace(is.na(.), 0)
-
-
-us_df <- us_df %>% select(Year,dID) %>% rename(Crude.Rate = dID) 
-s_df <- s_df %>% select(Year,dID) %>% rename(Crude.Rate = dID)
-
-
-
-# initialize plot
-fig <- plot_ly()
-
-
-fig <- fig %>% add_trace(data=us_df, x = ~Year, y = ~Crude.Rate, name='Crude.Rate.US', mode = 'markers',
-               line = list(color = 'red', width = 2, dash = 'dash'), marker = list(color='red', size=8))
-
-fig <- fig %>% add_trace(data=s_df,x = ~Year, y = ~Crude.Rate, name = 'Crude.Rate.ST', line = list(color = 'steelblue', width = 4), marker = list(color='steelblue', size=8)) 
-
-fig
-
-
-```
-
-
-
-
-
-```{r}
-
-# fig <- us_df %>% select(Year,d1) %>%
-#           #arrange(Crude.Rate) %>%
-#           plot_ly(x = ~Year,y = ~d1,
-#                   #color = ~1, 
-#                   #colors = c("lightgray","darkblue"),
-#                   showlegend = FALSE, type = 'scatter', mode = 'lines'
-#                   )
-# #%>% layout(yaxis = list(categoryorder = "total ascending"))
-
-
-dID <- 'd5'
- 
-#us_df <- us_df %>% select(Year,dID) %>% rename(Crude.Rate = dID)
-#s_df <- s_df %>% select(Year,dID) %>% rename(Crude.Rate = dID)
-
-fig <- us_df %>% select(Year,dID) %>% rename(Crude.Rate = dID) %>%
-  plot_ly(x = ~Year, y = ~Crude.Rate, name='Crude.Rate.US', mode = 'markers',
-               line = list(color = 'red', width = 2, dash = 'dash'), marker = list(color='red', size=8))
-
-fig2 <- s_df %>% select(Year,dID) %>% rename(Crude.Rate = dID) %>%
-  plot_ly(x = ~Year, y = ~Crude.Rate, name = 'Crude.Rate.ST', line = list(color = 'steelblue', width = 4)) 
-
-fig <- fig + fig2
-
-
-
-
-
-
-
+d0_df <- df %>% filter( Disease_ID == dID)
 
 
 
 ```
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -350,56 +162,7 @@ fig <- fig + fig2
 
 ```{r}
 
-month <- c('January', 'February', 'March', 'April', 'May', 'June', 'July',
-         'August', 'September', 'October', 'November', 'December')
-
-Year <- c(2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021)
-
-high_2000 <- c(32.5, 37.6, 49.9, 53.0, 69.1, 75.4, 76.5, 76.6, 70.7, 60.6, 45.1, 29.3)
-low_2000 <- c(13.8, 22.3, 32.5, 37.2, 49.9, 56.1, 57.7, 58.3, 51.2, 42.8, 31.6, 15.9)
-high_2007 <- c(36.5, 26.6, 43.6, 52.3, 71.5, 81.4, 80.5, 82.2, 76.0, 67.3, 46.1, 35.0)
-low_2007 <- c(23.6, 14.0, 27.0, 36.8, 47.6, 57.7, 58.9, 61.2, 53.3, 48.5, 31.0, 23.6)
-high_2014 <- c(28.8, 28.5, 37.0, 56.8, 69.7, 79.7, 78.5, 77.8, 74.1, 62.6, 45.3, 39.9)
-low_2014 <- c(12.7, 14.3, 18.6, 35.5, 49.9, 58.0, 60.0, 58.6, 51.7, 45.2, 32.2, 29.1)
-
-data <- data.frame(Year, high_2000, low_2000, high_2007, low_2007, high_2014, low_2014)
-
-
-fig <- plot_ly(data, x = ~Year, y = ~high_2014, name = 'High 2014', type = 'scatter', mode = 'lines')
-fig
-
-
-```
-
-
-
-
-
-```{r}
-
-x <- c(1:100)
-random_y <- rnorm(100, mean = 0)
-data <- data.frame(x, random_y)
-
-fig <- plot_ly(data, x = ~x, y = ~random_y, type = 'scatter', mode = 'lines')
-
-fig
-
-
-```
-
-
-
-
-```{r}
-
-#s_df <- df %>% pivot_wider(id_cols = c('State','Disease_ID'), names_from = 'Year', values_from = 'Crude.Rate')
-#s_df <- df %>% pivot_wider(id_cols = 'Year', names_from = c('State','Disease_ID'), values_from = 'Crude.Rate')
-#s_df <- s_df %>% replace(is.na(.), 0)
-
-s_df <- df %>% filter(State == 'NY') %>% select(Year, Crude.Rate, Disease_ID)
-s_df <- s_df %>% pivot_wider(id_cols = 'Year', names_from = 'Disease_ID', values_from = 'Crude.Rate')
-s_df <- s_df %>% replace(is.na(.), 0)
+unique(df$ICD.Chapter)
 
 
 ```
@@ -437,30 +200,14 @@ s_df <- s_df %>% replace(is.na(.), 0)
 
 
 
-```{r}
 
-df <- tribble(
-    ~ID, ~Date, ~V1, ~V2, ~V3,
-    1,  "Jan",   2,  3,  5,
-    1,  "Feb",   3,  4,  6,
-    1,  "Mar",   7,  8,  9,
-    2,  "Jan",   1,  1,  1,
-    2,  "Feb",   2,  3,  4,
-    2,  "Mar",   7,  8,  8
-)
 
 
-df %>%
-    gather(key = key, value = value, V1:V3) %>%
-    group_by(ID, key) %>%
-    mutate(lag = lag(value)) %>%
-    mutate(pct.change = (value - lag) / lag)
 
 
 
 
 
-```
 
 
 
@@ -472,207 +219,6 @@ df %>%
 
 
 
-```{r}
-
-new_data2 <- d |> 
-  dplyr::mutate(Name = factor(Name, levels = unique(Name))) |> 
-  dplyr::group_by(Name) |> 
-  mutate(ID = dplyr::cur_group_id()) |>
-  ungroup()
-
-
-```
-
-
-
-```{r}
-
-
-tot_df <- 
-  
-  
-agg_tbl <- df %>% group_by(department) %>% 
-  summarise(mean_salary=mean(salary),
-            .groups = 'drop')
-
-
-
-
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r}
-
-
-
-
-
-
-
-disease_lst <- unique(mort_df$ICD.Chapter)
-
-
-
-levels(mort_df$ICD) <- c(
-                            "Certain infectious and parasitic diseases",                                                          
-                             "Neoplasms",                                                                                          
-                            "Blood and blood-forming organs",
-                            "Endocrine, nutritional and metabolic diseases",                                                      
-                            "Mental and behavioural disorders",                                                                   
-                            "Diseases of the nervous system",                                                                     
-                            "Diseases of the circulatory system",                                                                 
-                            "Diseases of the respiratory system",                                                                 
-                            "Diseases of the digestive system",                                                                   
-                            "Diseases of the skin",                                                       
-                            "Diseases of the musculoskeletal system",                                       
-                            "Diseases of the genitourinary system",                                                               
-                            "Pregnancy, childbirth and the puerperium",                                                           
-                            "Conditions originating in the perinatal period",                                             
-                            "Congenital malformations / chromosomal abnormalities",                               
-                            "Symptoms, not elsewhere classified",            
-                            "External causes of morbidity and mortality"  
-                  )
-
-
-
-
-#mort_df$ICD
-mort_df$ICD_ID <- as.numeric(mort_df$ICD)
-
-
-
-```
-
-
-
-
-
-
-```{r}
-
-
-
-```
-
-
-
-
-
-
-
-
-
-```{r}
-
-
-#inc %>% group_by(State) %>% summarise(num = n()) %>%
-  
-  
-mort_df %>% filter(ICD.Chapter == 'Diseases of the nervous system') %>%
-	ggplot(aes(x=reorder(State,Crude.Rate), y=Crude.Rate, fill=State)) +
-	coord_flip() + 
-	theme_light() +
-    geom_bar(stat = 'identity', width=0.3 , show.legend = FALSE) +
-	labs(
-	    x = 'State', 
-	    y = 'Number of Companies', 
-	    title = 'Distribution of Companies (by State)'
-	)
-
-
-
-
-```
-
-
-
-
-
-
-```{r}
-
-fig <- mort_df %>% filter(ICD.Chapter == 'Diseases of the nervous system') %>%
-          #arrange(Crude.Rate) %>%
-          plot_ly(y = ~State,x = ~Crude.Rate,
-                  color = ~State, 
-                  colors = c("lightgray","darkblue"),
-                  showlegend = FALSE, type="bar"
-                  ) %>%
-      layout(yaxis = list(categoryorder = "total ascending"))
-
-fig
-
-
-```
-
-
-
-
-
-```{r}
-
-runExample("01_hello")
-
-```
-
-
-
-```{r}
-
-runExample("06_tabsets")
-
-```
-
-
-
-```{r}
-
-runApp("./inst/shiny/my_app/", display.mode = "showcase")
-runApp("./inst/shiny/m3_scratch2/", display.mode = "showcase")
-
-```
-
-
-
-```{r}
-
-library(maps)
-library(mapproj)
-
-
-source("inst/shiny/m3_census/helpers.R")
-counties <- readRDS("inst/shiny/m3_census/data/counties.rds")
-percent_map(counties$white, "darkgreen", "% White")
-
-
-```
 
 
 

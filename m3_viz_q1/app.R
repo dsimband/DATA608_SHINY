@@ -11,6 +11,9 @@ mort_df <- mort_df %>% filter(Year == 2010)
 
 mort_df$ICD <- replace(mort_df$ICD,mort_df$ICD=="Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism","Diseases of the blood and blood-forming organ")
 mort_df$ICD <- replace(mort_df$ICD,mort_df$ICD=="Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified"  ,"Symptoms not elsewhere classified")
+mort_df$ICD <- replace(mort_df$ICD,mort_df$ICD=="Diseases of the musculoskeletal system and connective tissue" , "Diseases of the musculoskeletal system")
+mort_df$ICD <- replace(mort_df$ICD,mort_df$ICD=="Certain conditions originating in the perinatal period" , "Conditions / perinatal period" )
+mort_df$ICD <- replace(mort_df$ICD,mort_df$ICD=="Congenital malformations, deformations and chromosomal abnormalities" ,  "Congenital malformations, and chromosomal abnormalities")
 
 disease_lst <- unique(mort_df$ICD)
 
