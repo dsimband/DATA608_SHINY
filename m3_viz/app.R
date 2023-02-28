@@ -9,7 +9,10 @@ library(plotly)
 mort_df <- read.csv('data/cleaned-cdc-mortality-1999-2010-2.csv')
 mort_df <- mort_df %>% filter(Year == 2010)
 
-disease_lst <- unique(mort_df$ICD.Chapter)
+mort_df$ICD <- replace(mort_df$ICD,mort_df$ICD=="Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism","Diseases of the blood and blood-forming organ")
+mort_df$ICD <- replace(mort_df$ICD,mort_df$ICD=="Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified"  ,"Symptoms not elsewhere classified")
+
+disease_lst <- unique(mort_df$ICD)
 
 
 
@@ -20,25 +23,16 @@ ui <- fluidPage(
   ),
 
   div(id='input',
-    #sidebarLayout(
-    #    sidebarPanel(
           selectInput(
             "disease",
             label="Choose a cause of death",
             choices=disease_lst
           ),
-    #    ),
     ),
 
   div(id='input',
       plotlyOutput("distPlot", height = "800px", width = "800px"),
   )
-    #     mainPanel(
-    #        #plotOutput("distPlot")
-    #        #box(plotlyOutput("distPlot", height = "800px", width = "800px"))
-    #         plotlyOutput("distPlot", height = "800px", width = "800px")
-    #     )
-    # )
 
 )
 
@@ -48,7 +42,7 @@ server <- function(input, output) {
 
     output$distPlot <- renderPlotly({
 
-      mort_df %>% filter(ICD.Chapter == input$disease) %>%
+      mort_df %>% filter(ICD == input$disease) %>%
         #arrange(Crude.Rate) %>%
         plot_ly(y = ~State,x = ~Crude.Rate,
                 color = ~State,
