@@ -3,7 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(plotly)
 
-# m3_viz
+# m3_viz_q1
 
 
 mort_df <- read.csv('data/cleaned-cdc-mortality-1999-2010-2.csv')

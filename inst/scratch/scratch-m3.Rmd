@@ -164,10 +164,9 @@ s_df <- s_df %>% select(Year,dID) %>% rename(Crude.Rate = dID)
 fig <- plot_ly()
 
 
-fig <- fig %>% add_trace(data=us_df, x = ~Year, y = ~Crude.Rate, name='Crude.Rate.US', mode = 'markers',
-               line = list(color = 'red', width = 2, dash = 'dash'), marker = list(color='red', size=8))
+fig <- fig %>% add_trace(data=us_df, x = ~Year, y = ~Crude.Rate, name='Crude.Rate.US', type = 'scatter', mode = 'markers', line = list(color = 'red', width = 2, dash = 'dash'),marker = list(color='red', size=8))
 
-fig <- fig %>% add_trace(data=s_df,x = ~Year, y = ~Crude.Rate, name = 'Crude.Rate.ST', line = list(color = 'steelblue', width = 4), marker = list(color='steelblue', size=8)) 
+fig <- fig %>% add_trace(data=s_df,x = ~Year, y = ~Crude.Rate, name = 'Crude.Rate.ST', type = 'scatter', mode = 'lines+markers', line = list(color = 'steelblue', width = 4), marker = list(color='steelblue', size=8)) 
 
 fig
 

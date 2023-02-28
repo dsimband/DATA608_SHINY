@@ -5,7 +5,7 @@ account: dsimband
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 8418361
-bundleId: 6893217
+bundleId: 6895158
 url: https://dsimband.shinyapps.io/m3_viz/
-when: 1677513243.72208
-lastSyncTime: 1677513243.72209
+when: 1677548727.7456
+lastSyncTime: 1677548727.74561

@@ -1,0 +1,11 @@
+name: m3_viz
+title:
+username:
+account: dsimband
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8418361
+bundleId: 6895165
+url: https://dsimband.shinyapps.io/m3_viz/
+when: 1677548852.47607
+lastSyncTime: 1677548852.47608

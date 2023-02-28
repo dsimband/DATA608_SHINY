@@ -12,5 +12,10 @@ rsconnect::setAccountInfo(name='dsimband',
 
 
 
-rsconnect::deployApp('./m3_viz')
+rsconnect::deployApp('./m3_viz_q1')
+
+
+
+
+rsconnect::deployApp('./m3_viz_q2')
 
