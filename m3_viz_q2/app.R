@@ -4,20 +4,23 @@ library(ggplot2)
 library(plotly)
 library(tidyverse)
 
+
+
 # m3_viz_q2
 
 
 source("helpers.R")
 
 
-
+# setup application date
 st_df <- loadStateMortalityData()
-us_df <- loadUSMortalityData()
+us_df <- loadUSMortalityData(st_df)
 disease_lst <- unique(st_df$Disease_ID)
 st_lst <- unique(st_df$State)
 
 
 
+# Build Page UI
 ui <- fluidPage(
 
   div(id='header',
@@ -42,6 +45,7 @@ ui <- fluidPage(
   )
 
 )
+
 
 # Define server logic required to draw a bar chart
 server <- function(input, output) {
